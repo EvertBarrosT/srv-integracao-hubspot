@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: srv-integracao-hubspot
+
+server:
+  port: 8080
+
+hubspot:
+  client-id: ${CLIENT_ID}
+  client-secret: ${CLIENT_SECRET}
+  redirect-uri: ${REDIRECT_URI}
+  scope: ${SCOPE}
+  api:
+      url: https://api.hubapi.com
