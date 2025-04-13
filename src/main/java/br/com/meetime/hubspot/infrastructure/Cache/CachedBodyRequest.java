@@ -48,9 +48,6 @@ public class CachedBodyRequest extends HttpServletRequestWrapper {
 
     public String getRequestBody() {
         String body = new String(cachedBody, StandardCharsets.UTF_8);
-        //Temporario
-        log.info("Body (raw bytes): {}", Arrays.toString(cachedBody));
-        log.info("Body (string): {}", body);
 
         log.info("Obtendo o corpo da requisição em cache como String. Tamanho: {} caracteres", body.length());
         return body;

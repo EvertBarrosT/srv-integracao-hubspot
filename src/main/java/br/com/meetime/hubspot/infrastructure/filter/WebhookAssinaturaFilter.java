@@ -28,15 +28,12 @@ public class WebhookAssinaturaFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        log.info("Iniciando filtro de assinatura para a URI: {}", request.getRequestURI());
-        //Temporario
-        log.info("Request URI bruta: {}", request.getRequestURI());
-        log.info("Request URL completa: {}", request.getRequestURL());
+        log.info("Iniciando filtro de assinatura para a URL: {}", request.getRequestURI());
 
         if (request.getRequestURI().startsWith("/v1/eventos/contato-criado")) {
             String signature = request.getHeader("X-HubSpot-Signature-v3");
             String timestampHeader = request.getHeader("X-HubSpot-Request-Timestamp");
-            log.info("Headers de validação recebidos: Assinatura: {}, Timestamp: {}", signature, timestampHeader);
+            log.debug("Headers de validação recebidos: Assinatura: {}, Timestamp: {}", signature, timestampHeader);
 
             if (signature == null || timestampHeader == null) {
                 log.warn("Assinatura ou timestamp ausente nos cabeçalhos da requisição.");
@@ -46,7 +43,7 @@ public class WebhookAssinaturaFilter extends OncePerRequestFilter {
 
             long timestamp = Long.parseLong(timestampHeader);
             long now = Instant.now().toEpochMilli();
-            log.info("Timestamp recebido: {}, Timestamp atual: {}", timestamp, now);
+            log.debug("Timestamp recebido: {}, Timestamp atual: {}", timestamp, now);
 
             if (Math.abs(now - timestamp) > DESVIO_PERMITIDO.getSeconds()) {
                 log.warn("Timestamp inválido. Diferença excede o desvio permitido de {} segundos.", DESVIO_PERMITIDO.getSeconds());
@@ -56,16 +53,16 @@ public class WebhookAssinaturaFilter extends OncePerRequestFilter {
 
             CachedBodyRequest wrappedRequest = new CachedBodyRequest(request);
             String method = wrappedRequest.getMethod();
-            String decodedUri = UrlUtils.decodificarUrl(wrappedRequest.getRequestURL().toString());;
+            String decodedUrl = UrlUtils.decodificarUrl(wrappedRequest.getRequestURL().toString());;
             String body = wrappedRequest.getRequestBody();
 
-            log.info("Método: {}, URI decodificada: {}, Corpo da requisição: {}", method, decodedUri, body);
+            log.debug("Método: {}, URL decodificada: {}, Corpo da requisição: {}", method, decodedUrl, body);
 
-            String canonicalString = method + decodedUri + body + timestampHeader;
-            log.info("String canônica gerada: {}", canonicalString);
+            String canonicalString = method + decodedUrl + body + timestampHeader;
+            log.debug("String canônica gerada: {}", canonicalString);
 
             String expectedSignature = HmacUtils.gerarHmacBase64(canonicalString, hubspotProperties.getClientSecret());
-            log.info("Assinatura esperada: {}", expectedSignature);
+            log.debug("Assinatura esperada: {}", expectedSignature);
 
             if (!MessageDigest.isEqual(expectedSignature.getBytes(), signature.getBytes())) {
                 log.warn("Assinatura inválida. Assinatura recebida: {}", signature);
@@ -76,7 +73,7 @@ public class WebhookAssinaturaFilter extends OncePerRequestFilter {
             log.info("Assinatura validada com sucesso.");
             filterChain.doFilter(wrappedRequest, response);
         } else {
-            log.info("URI não corresponde ao filtro. Continuando a cadeia de filtros.");
+            log.debug("URL não corresponde ao filtro. Continuando a cadeia de filtros.");
             filterChain.doFilter(request, response);
         }
     }

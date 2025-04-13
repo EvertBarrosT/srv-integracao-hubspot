@@ -11,7 +11,7 @@ public class ContatoCriadoEventoUseCase implements ContatoCriadoEventoInputPort 
     @Override
     public void processarEvento(WebhookEvento evento) {
         log.info("🚀 Iniciando o processamento do evento de contato criado...");
-        log.debug("📋 Detalhes do evento recebido: {}", evento);
+        log.info("📋 Detalhes do evento recebido: {}", evento);
         log.info("✅ Evento processado com sucesso! ID do Evento: {}", evento.eventId());
     }
 }
