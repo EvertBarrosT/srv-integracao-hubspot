@@ -56,7 +56,7 @@ public class WebhookAssinaturaFilter extends OncePerRequestFilter {
 
             CachedBodyRequest wrappedRequest = new CachedBodyRequest(request);
             String method = wrappedRequest.getMethod();
-            String decodedUri = UrlUtils.decodificarUrl(wrappedRequest.getRequestURI());
+            String decodedUri = UrlUtils.decodificarUrl(wrappedRequest.getRequestURL().toString());;
             String body = wrappedRequest.getRequestBody();
 
             log.info("Método: {}, URI decodificada: {}, Corpo da requisição: {}", method, decodedUri, body);
