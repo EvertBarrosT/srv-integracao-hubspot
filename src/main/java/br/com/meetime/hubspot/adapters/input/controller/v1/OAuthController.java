@@ -1,8 +1,8 @@
-package br.com.meetime.hubspot.adapters.input.controller;
+package br.com.meetime.hubspot.adapters.input.controller.v1;
 
 import br.com.meetime.hubspot.application.port.input.AccessTokenInputPort;
-import br.com.meetime.hubspot.domain.model.OAuthTokenResponse;
-import br.com.meetime.hubspot.domain.model.OAuthUrlResponse;
+import br.com.meetime.hubspot.domain.model.response.OAuthTokenResponseV1;
+import br.com.meetime.hubspot.domain.model.response.OAuthUrlResponseV1;
 import br.com.meetime.hubspot.infrastructure.contract.OAuthContract;
 import br.com.meetime.hubspot.infrastructure.properties.HubspotProperties;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/oauth")
+@RequestMapping("/v1/oauth")
 @RequiredArgsConstructor
 @Slf4j
 @Validated
@@ -27,8 +27,8 @@ public class OAuthController implements OAuthContract {
 
     @Override
     @GetMapping(path = "/url")
-    public ResponseEntity<OAuthUrlResponse> getUrlAutorizacao() {
-        log.info("Iniciando oAuthController.getUrlAutorizacao");
+    public ResponseEntity<OAuthUrlResponseV1> getUrlAutorizacao() {
+        log.info("Recebida requisição para obter URL de autorização.");
 
         String authorizationUrl = String.format(
                 "https://app.hubspot.com/oauth/authorize?client_id=%s&redirect_uri=%s&scope=%s",
@@ -36,17 +36,17 @@ public class OAuthController implements OAuthContract {
                 hubspotProperties.getRedirectUri(),
                 hubspotProperties.getScope()
         );
-        return ResponseEntity.ok(new OAuthUrlResponse(authorizationUrl));
+        return ResponseEntity.ok(new OAuthUrlResponseV1(authorizationUrl));
     }
 
     @Override
     @GetMapping(path = "/token")
-    public ResponseEntity<OAuthTokenResponse> getAccessToken(
+    public ResponseEntity<OAuthTokenResponseV1> getAccessToken(
             @RequestParam String code
     ) {
-        log.info("Iniciando oAuthController.getAccessToken, Request: {}", code);
+        log.info("Recebida requisição para obter token de acesso com código: {}", code);
 
-        OAuthTokenResponse response = accessTokenInputPort.getToken(
+        OAuthTokenResponseV1 response = accessTokenInputPort.getTokenV1(
                 hubspotProperties.getClientId(),
                 hubspotProperties.getClientSecret(),
                 hubspotProperties.getRedirectUri(),

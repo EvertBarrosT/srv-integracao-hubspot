@@ -12,3 +12,7 @@ hubspot:
   scope: ${SCOPE}
   api:
       url: https://api.hubapi.com
+
+springdoc:
+  api-docs:
+    path: /swagger.json

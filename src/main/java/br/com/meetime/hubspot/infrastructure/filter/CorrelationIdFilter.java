@@ -24,23 +24,29 @@ public class CorrelationIdFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-        log.debug("Iniciando filtro de Correlation ID");
+        log.info("🛠️ Iniciando filtro de Correlation ID para a requisição.");
 
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
         String idExistente = httpRequest.getHeader(CorrelationIdUtils.getHeaderName());
+        log.debug("Correlation ID existente no cabeçalho: {}", idExistente);
+
         String correlationId = correlationIdUtils.getCorrelationId(idExistente);
+        log.info("Correlation ID gerado ou reutilizado: {}", correlationId);
 
         httpResponse.setHeader(CorrelationIdUtils.getHeaderName(), correlationId);
-
-        log.debug("Correlation ID adicionado: {}", correlationId);
+        log.debug("Correlation ID adicionado ao cabeçalho da resposta.");
 
         try {
             chain.doFilter(request, response);
+            log.info("✅ Filtro de Correlation ID aplicado com sucesso.");
+        } catch (Exception e) {
+            log.error("❌ Erro ao aplicar o filtro de Correlation ID: {}", e.getMessage(), e);
+            throw e;
         } finally {
             correlationIdUtils.clear();
-            log.debug("Correlation ID Limpo");
+            log.debug("Correlation ID limpo após o processamento.");
         }
     }
 }
