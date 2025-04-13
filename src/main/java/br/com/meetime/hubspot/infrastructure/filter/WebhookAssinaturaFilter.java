@@ -42,7 +42,7 @@ public class WebhookAssinaturaFilter extends OncePerRequestFilter {
             }
 
             long timestamp = Long.parseLong(timestampHeader);
-            long now = Instant.now().getEpochSecond();
+            long now = Instant.now().toEpochMilli();
             log.info("Timestamp recebido: {}, Timestamp atual: {}", timestamp, now);
 
             if (Math.abs(now - timestamp) > DESVIO_PERMITIDO.getSeconds()) {
