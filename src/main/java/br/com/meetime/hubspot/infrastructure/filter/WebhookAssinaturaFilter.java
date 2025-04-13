@@ -29,6 +29,9 @@ public class WebhookAssinaturaFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         log.info("Iniciando filtro de assinatura para a URI: {}", request.getRequestURI());
+        //Temporario
+        log.info("Request URI bruta: {}", request.getRequestURI());
+        log.info("Request URL completa: {}", request.getRequestURL());
 
         if (request.getRequestURI().startsWith("/v1/eventos/contato-criado")) {
             String signature = request.getHeader("X-HubSpot-Signature-v3");

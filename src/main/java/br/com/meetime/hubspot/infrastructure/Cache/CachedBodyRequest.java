@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 @Slf4j
 public class CachedBodyRequest extends HttpServletRequestWrapper {
@@ -47,6 +48,10 @@ public class CachedBodyRequest extends HttpServletRequestWrapper {
 
     public String getRequestBody() {
         String body = new String(cachedBody, StandardCharsets.UTF_8);
+        //Temporario
+        log.info("Body (raw bytes): {}", Arrays.toString(cachedBody));
+        log.info("Body (string): {}", body);
+
         log.info("Obtendo o corpo da requisição em cache como String. Tamanho: {} caracteres", body.length());
         return body;
     }
